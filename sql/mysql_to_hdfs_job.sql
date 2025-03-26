@@ -134,7 +134,7 @@ row format delimited fields terminated by '\t' -- 指定分割符为\t
 location '/user/hive/warehouse/dev_realtime_v1_xinyu_luo.db/ods/ods_base_dic/' -- 指定数据在hdfs上的存储位置
 tblproperties ("parquet.comperssion"="gzip");
 
-load data inpath '/2207A/xinyu_luo/base_province/2025-03-23' overwrite into table ods_base_dic partition (dt='2025-03-23');
+load data inpath '/2207A/xinyu_luo/base_dic/2025-03-23' overwrite into table ods_base_dic partition (dt='2025-03-23');
 
 drop table if exists ods_base_province;
 create table if not exists ods_base_province (
@@ -199,7 +199,7 @@ tblproperties ("parquet.comperssion"="gzip");
 load data inpath '/2207A/xinyu_luo/cart_info/2025-03-23' overwrite into table ods_cart_info partition (dt='2025-03-23');
 
 drop table if exists ods_comment_info;
-create table if not exists ods_base_trademark (
+create table if not exists ods_comment_info (
   `id` bigint comment '编号',
   `user_id` bigint comment '用户名称',
   `sku_id` bigint comment 'skuid',
@@ -212,10 +212,10 @@ create table if not exists ods_base_trademark (
 ) comment '商品评论表'
 PARTITIONED BY (dt string) -- 按照时间创建分区
 row format delimited fields terminated by '\t' -- 指定分割符为\t
-location '/user/hive/warehouse/dev_realtime_v1_xinyu_luo.db/ods/ods_base_trademark/' -- 指定数据在hdfs上的存储位置
+location '/user/hive/warehouse/dev_realtime_v1_xinyu_luo.db/ods/ods_comment_info/' -- 指定数据在hdfs上的存储位置
 tblproperties ("parquet.comperssion"="gzip");
 
-load data inpath '/2207A/xinyu_luo/comment_info/2025-03-23' overwrite into table ods_base_trademark partition (dt='2025-03-23');
+load data inpath '/2207A/xinyu_luo/comment_info/2025-03-23' overwrite into table ods_comment_info partition (dt='2025-03-23');
 
 drop table if exists ods_coupon_info;
 create table if not exists ods_coupon_info (
