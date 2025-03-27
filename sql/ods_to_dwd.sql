@@ -19,7 +19,7 @@ create_time string COMMENT '创建时间'
 ) COMMENT '商品维度表'
 PARTITIONED BY (dt string)
 stored as parquet
-location '/user/hive/warehouse/dev_realtime_v1_xinyu_luo.db/dwd/dwd_dim_sku_info/'
+location '/user/hive/warehouse/dev_realtime_v1_xinyu_luo.db.db/dwd/dwd_dim_sku_info/'
 tblproperties ("parquet.compression"="lzo");
 
 -- set hive.input.format=org.apache.hadoop.hive.ql.io.HiveInputFormat;
@@ -91,7 +91,7 @@ create external table dwd_dim_coupon_info(
 ) COMMENT '优惠券维度表'
 PARTITIONED BY (dt string)
 stored as parquet
-location '/warehouse/gmall/dwd/dwd_dim_coupon_info/'
+location '/user/hive/warehouse/dev_realtime_v1_xinyu_luo.db/dwd/dwd_dim_coupon_info/'
 tblproperties ("parquet.compression"="lzo");
 
 set hive.input.format=org.apache.hadoop.hive.ql.io.HiveInputFormat;
@@ -127,7 +127,7 @@ create external table dwd_dim_activity_info(
 ) COMMENT '活动信息表'
 PARTITIONED BY (dt string)
 stored as parquet
-location '/warehouse/gmall/dwd/dwd_dim_activity_info/'
+location '/user/hive/warehouse/dev_realtime_v1_xinyu_luo.db/dwd/dwd_dim_activity_info/'
 tblproperties ("parquet.compression"="lzo");
 
 set hive.input.format=org.apache.hadoop.hive.ql.io.HiveInputFormat;
@@ -152,7 +152,7 @@ create external table dwd_dim_base_province (
     region_name string COMMENT '地区名称'
 ) COMMENT '地区维度表'
 stored as parquet
-location '/warehouse/gmall/dwd/dwd_dim_base_province/'
+location '/user/hive/warehouse/dev_realtime_v1_xinyu_luo.db/dwd/dwd_dim_base_province/'
 tblproperties ("parquet.compression"="lzo");
 
 set hive.input.format=org.apache.hadoop.hive.ql.io.HiveInputFormat;
@@ -189,11 +189,11 @@ create external table dwd_fact_payment_info (
 ) COMMENT '支付事实表表'
 PARTITIONED BY (`dt` string)
 stored as parquet
-location '/warehouse/gmall/dwd/dwd_fact_payment_info/'
+location '/user/hive/warehouse/dev_realtime_v1_xinyu_luo.db/dwd/dwd_fact_payment_info/'
 tblproperties ("parquet.compression"="lzo");
 
 SET hive.input.format=org.apache.hadoop.hive.ql.io.HiveInputFormat;
-insert overwrite table dwd_fact_payment_info partition(dt='2020-06-14')
+insert overwrite table dwd_fact_payment_info partition(dt='2025-03-23')
 select
     pi.id,
     pi.out_trade_no,
@@ -207,11 +207,11 @@ select
     oi.province_id
 from
     (
-        select * from ods_payment_info where dt='2020-06-14'
+        select * from ods_payment_info where dt='2025-03-23'
     )pi
         join
     (
-        select id, province_id from ods_order_info where dt='2020-06-14'
+        select id, province_id from ods_order_info where dt='2025-03-23'
     )oi
     on pi.order_id = oi.id;
 
@@ -229,11 +229,11 @@ create external table dwd_fact_order_refund_info(
 ) COMMENT '退款事实表'
 PARTITIONED BY (`dt` string)
 stored as parquet
-location '/warehouse/gmall/dwd/dwd_fact_order_refund_info/'
+location '/user/hive/warehouse/dev_realtime_v1_xinyu_luo.db/dwd/dwd_fact_order_refund_info/'
 tblproperties ("parquet.compression"="lzo");
 
 SET hive.input.format=org.apache.hadoop.hive.ql.io.HiveInputFormat;
-insert overwrite table dwd_fact_order_refund_info partition(dt='2020-06-14')
+insert overwrite table dwd_fact_order_refund_info partition(dt='2025-03-23')
 select
     id,
     user_id,
@@ -245,7 +245,7 @@ select
     refund_reason_type,
     create_time
 from ods_order_refund_info
-where dt='2020-06-14';
+where dt='2025-03-23';
 
 
 drop table if exists dwd_fact_comment_info;
@@ -260,12 +260,12 @@ create external table dwd_fact_comment_info(
 ) COMMENT '评价事实表'
 PARTITIONED BY (`dt` string)
 stored as parquet
-location '/warehouse/gmall/dwd/dwd_fact_comment_info/'
+location '/user/hive/warehouse/dev_realtime_v1_xinyu_luo.db/dwd/dwd_fact_comment_info/'
 tblproperties ("parquet.compression"="lzo");
 
 
 SET hive.input.format=org.apache.hadoop.hive.ql.io.HiveInputFormat;
-insert overwrite table dwd_fact_comment_info partition(dt='2020-06-14')
+insert overwrite table dwd_fact_comment_info partition(dt='2025-03-23')
 select
     id,
     user_id,
@@ -275,7 +275,7 @@ select
     appraise,
     create_time
 from ods_comment_info
-where dt='2020-06-14';
+where dt='2025-03-23';
 
 
 drop table if exists dwd_fact_order_detail;
@@ -298,11 +298,11 @@ create external table dwd_fact_order_detail (
 ) COMMENT '订单明细事实表表'
 PARTITIONED BY (`dt` string)
 stored as parquet
-location '/warehouse/gmall/dwd/dwd_fact_order_detail/'
+location '/user/hive/warehouse/dev_realtime_v1_xinyu_luo.db/dwd/dwd_fact_order_detail/'
 tblproperties ("parquet.compression"="lzo");
 
 SET hive.input.format=org.apache.hadoop.hive.ql.io.HiveInputFormat;
-insert overwrite table dwd_fact_order_detail partition(dt='2020-06-14')
+insert overwrite table dwd_fact_order_detail partition(dt='2025-03-23')
 select
     id,
     order_id,
@@ -346,11 +346,11 @@ from
                 sum(round(od.order_price*od.sku_num/oi.original_total_amount*oi.benefit_reduce_amount,2)) over(partition by od.order_id) sum_div_benefit_reduce_amount
         from
             (
-                select * from ods_order_detail where dt='2020-06-14'
+                select * from ods_order_detail where dt='2025-03-23'
             ) od
                 join
             (
-                select * from ods_order_info where dt='2020-06-14'
+                select * from ods_order_info where dt='2025-03-23'
             ) oi
             on od.order_id=oi.id
     )t1;
@@ -373,12 +373,12 @@ create external table dwd_fact_cart_info(
 ) COMMENT '加购事实表'
 PARTITIONED BY (`dt` string)
 stored as parquet
-location '/warehouse/gmall/dwd/dwd_fact_cart_info/'
+location '/user/hive/warehouse/dev_realtime_v1_xinyu_luo.db/dwd/dwd_fact_cart_info/'
 tblproperties ("parquet.compression"="lzo");
 
 
 SET hive.input.format=org.apache.hadoop.hive.ql.io.HiveInputFormat;
-insert overwrite table dwd_fact_cart_info partition(dt='2020-06-14')
+insert overwrite table dwd_fact_cart_info partition(dt='2025-03-23')
 select
     id,
     user_id,
@@ -393,7 +393,7 @@ select
     source_type,
     source_id
 from ods_cart_info
-where dt='2020-06-14';
+where dt='2025-03-23';
 
 
 drop table if exists dwd_fact_favor_info;
@@ -408,11 +408,11 @@ create external table dwd_fact_favor_info(
 ) COMMENT '收藏事实表'
 PARTITIONED BY (`dt` string)
 stored as parquet
-location '/warehouse/gmall/dwd/dwd_fact_favor_info/'
+location '/user/hive/warehouse/dev_realtime_v1_xinyu_luo.db/dwd/dwd_fact_favor_info/'
 tblproperties ("parquet.compression"="lzo");
 
 SET hive.input.format=org.apache.hadoop.hive.ql.io.HiveInputFormat;
-insert overwrite table dwd_fact_favor_info partition(dt='2020-06-14')
+insert overwrite table dwd_fact_favor_info partition(dt='2025-03-23')
 select
     id,
     user_id,
@@ -422,7 +422,7 @@ select
     create_time,
     cancel_time
 from ods_favor_info
-where dt='2020-06-14';
+where dt='2025-03-23';
 
 
 drop table if exists dwd_fact_coupon_use;
@@ -438,7 +438,7 @@ create external table dwd_fact_coupon_use(
 ) COMMENT '优惠券领用事实表'
 PARTITIONED BY (`dt` string)
 stored as parquet
-location '/warehouse/gmall/dwd/dwd_fact_coupon_use/'
+location '/user/hive/warehouse/dev_realtime_v1_xinyu_luo.db/dwd/dwd_fact_coupon_use/'
 tblproperties ("parquet.compression"="lzo");
 
 
@@ -472,7 +472,7 @@ from
                   select
                       date_format(get_time,'yyyy-MM-dd')
                   from ods_coupon_use
-                  where dt='2020-06-14'
+                  where dt='2025-03-23'
               )
     )old
         full outer join
@@ -487,7 +487,7 @@ from
             using_time,
             used_time
         from ods_coupon_use
-        where dt='2020-06-14'
+        where dt='2025-03-23'
     )new
     on old.id=new.id;
 
@@ -513,7 +513,7 @@ create external table dwd_fact_order_info (
 ) COMMENT '订单事实表'
 PARTITIONED BY (`dt` string)
 stored as parquet
-location '/warehouse/gmall/dwd/dwd_fact_order_info/'
+location '/user/hive/warehouse/dev_realtime_v1_xinyu_luo.db/dwd/dwd_fact_order_info/'
 tblproperties ("parquet.compression"="lzo");
 
 set hive.exec.dynamic.partition.mode=nonstrict;
@@ -563,7 +563,7 @@ from
                   select
                       date_format(create_time,'yyyy-MM-dd')
                   from ods_order_info
-                  where dt='2020-06-14'
+                  where dt='2025-03-23'
               )
     )old
         full outer join
@@ -586,17 +586,17 @@ from
                     order_id,
                     str_to_map(concat_ws(',',collect_set(concat(order_status,'=',operate_time))),',','=') tms
                 from ods_order_status_log
-                where dt='2020-06-14'
+                where dt='2025-03-23'
                 group by order_id
             )log
                 join
             (
-                select * from ods_order_info where dt='2020-06-14'
+                select * from ods_order_info where dt='2025-03-23'
             )info
             on log.order_id=info.id
                 left join
             (
-                select * from ods_activity_order where dt='2020-06-14'
+                select * from ods_activity_order where dt='2025-03-23'
             )act
             on log.order_id=act.order_id
     )new
@@ -617,7 +617,7 @@ create external table dwd_dim_user_info_his(
     `end_date`  string COMMENT '有效结束日期'
 ) COMMENT '用户拉链表'
 stored as parquet
-location '/warehouse/gmall/dwd/dwd_dim_user_info_his/'
+location '/user/hive/warehouse/dev_realtime_v1_xinyu_luo.db/dwd/dwd_dim_user_info_his/'
 tblproperties ("parquet.compression"="lzo");
 
 SET hive.input.format=org.apache.hadoop.hive.ql.io.HiveInputFormat;
@@ -631,10 +631,10 @@ select
     user_level,
     create_time,
     operate_time,
-    '2020-06-14',
+    '2025-03-23',
     '9999-99-99'
 from ods_user_info oi
-where oi.dt='2020-06-14';
+where oi.dt='2025-03-23';
 
 
 drop table if exists dwd_dim_user_info_his_tmp;
@@ -651,7 +651,7 @@ create external table dwd_dim_user_info_his_tmp(
     `end_date`  string COMMENT '有效结束日期'
 ) COMMENT '订单拉链临时表'
 stored as parquet
-location '/warehouse/gmall/dwd/dwd_dim_user_info_his_tmp/'
+location '/user/hive/warehouse/dev_realtime_v1_xinyu_luo.db/dwd/dwd_dim_user_info_his_tmp/'
 tblproperties ("parquet.compression"="lzo");
 
 
